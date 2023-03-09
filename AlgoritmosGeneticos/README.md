@@ -1,5 +1,6 @@
 # Experimentos de otimização e algoritmos genéticos
 
-Coloque seus experimentos de algoritmos genéticos nesta pasta.
+Os experimentos do grupo de Algoritmos Genéticos estão nessa pasta e estão divididos em:
 
-Esceva um README aqui para guiar o leitor sobre seus experimentos realizados.
+1. Busca aleatória resolvendo o problema da caixa binária
+2. Busca em grade resolvendo o problema da caixa binária (com opção de utilizar o `itertools`)
