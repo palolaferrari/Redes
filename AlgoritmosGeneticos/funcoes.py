@@ -27,9 +27,19 @@ def gene_cnb(valor_max_caixa):
     return gene
 
 
-def gene_letra():
+def gene_letras(letras):
+    '''gera uma letra válida para o problema da senha
+    
+    Args: 
+        letras: quais letras podemos usar
+        
+    Return:
+        uma letra
     '''
-    '''
+    letra = random.choice(letras)
+    return letra
+
+
 #################################################################
 #                        indivíduo
 #################################################################
@@ -66,6 +76,23 @@ def individuo_cnb(numero_genes, valor_max_caixa):
         individuo.append(gene)
     return individuo
     
+def individuo_letra (letras, tamanho_senha):
+    ''' gera um candidato para o problema senha
+    
+    Args:
+        letras: letras que podem ser usadas
+        tamanho_senha: inteiro que representa o tamanho da senha
+        
+    return:
+        um lista com n letras
+            
+    '''
+    candidato = []
+    for _ in range(tamanho_senha):
+        letra = gene_letras(letras)
+        candidato.append(letra)
+    return candidato
+
 
 #################################################################
 #                        população
@@ -103,7 +130,22 @@ def populacao_cnb(tamanho_populacao, numero_genes,valor_max_caixa):
         individuo = individuo_cnb(numero_genes, valor_max_caixa)
         populacao.append(individuo) #ele está criando uma pop a partir de uma funcao que ja existe, n vezes
     return populacao
+
+def populacao_letras(letras, tamanho_senha, tamanho_populacao):
+    '''gera uma populacao com possiveis senhas
     
+    Args: 
+        letras: letras que podem ser usadas
+        tamanho_senha: inteiro que representa o tamanho da senha
+        tamanho_populacao: inteiro que representa o tamanho da populacao
+        
+    return: 
+        lista com individuos possiveis a serem a solucao do porblema senha
+    '''
+    populacao = []
+    for _ in range(tamanho_populacao):
+        populacao.append(individuo_letra (letras, tamanho_senha))
+    return populacao
 
 
 #################################################################
