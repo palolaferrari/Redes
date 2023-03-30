@@ -94,19 +94,20 @@ def individuo_senha(tamanho_senha, letras):
 
 
     
-def individuo_senha_variavel(letras):
+def individuo_senha_variavel(max_tamanho, letras):
     """Cria um candidato para o problema da senha
     Args:
       letras: letras possíveis de serem sorteadas.
+      max_tamanho: tamanho maximo que a senha pode ter.
     Return:
-      Lista com  letras
+      Lista com um numero aleatório de letras.
     """
 
     candidato = []
+    tamanho_max = random.randint(3, max_tamanho) #para nao ter problema no cruzamento
 
-    for n in range(tamanho_senha):
+    for n in range(tamanho_max):
         candidato.append(gene_letra(letras))
-
     return candidato
 
 
@@ -150,6 +151,7 @@ def populacao_cnb(tamanho_populacao, numero_genes,valor_max_caixa):
 
 
 def populacao_inicial_senha(tamanho, tamanho_senha, letras):
+    
     """Cria população inicial no problema da senha
     Args
       tamanho: tamanho da população.
@@ -163,7 +165,20 @@ def populacao_inicial_senha(tamanho, tamanho_senha, letras):
         populacao.append(individuo_senha(tamanho_senha, letras))
     return populacao
 
-
+def populacao_inicial_senha_variavel(tamanho, max_tamanho, letras):
+    
+    """Cria população inicial no problema da senha
+    Args
+      tamanho: tamanho da população.
+      max_tamanho: tamanho max que a senha pode ter
+      letras: letras possíveis de serem sorteadas.
+    Returns:
+      Lista com todos os indivíduos da população no problema da senha.
+    """
+    populacao = []
+    for n in range(tamanho):
+        populacao.append(individuo_senha_variavel(max_tamanho, letras))
+    return populacao
 
 #################################################################
 #                        seleção
@@ -244,6 +259,26 @@ def cruzamento_ponto_simples(mae, pai):
     
     return filho1, filho2
 
+def cruzamento_ponto_simples_sv(mae, pai):
+    ''' Operador de cruzamento de ponto simples para o problema das senha variaveis.
+    
+    Args: 
+       mae: uma lista representando um individuo
+       pai: uma lista representando um individuo
+       
+    Return:
+       Duas listas, sendo que cada uma das listas representa um filho dos pais que foram os argumentos, com o crossover setado no menor gene 
+    '''
+    if len(pai) > len(mae):
+        ponto_de_corte = random.randint(1, len(pai)-1) #seleciona numeros inteiros dentro do intervalo, inclusive ele mesmo (tipo com intervalos usando [] fechados) e tem que ser aleatório (random)
+    else: 
+        ponto_de_corte = random.randint(1, len(mae)-1)
+    
+    filho1 = pai [:ponto_de_corte] + mae [ponto_de_corte:]
+    filho2 = mae [:ponto_de_corte] + pai [ponto_de_corte:]
+    
+    return filho1, filho2
+
 
 
 #################################################################
@@ -290,6 +325,29 @@ def mutacao_senha(individuo, letras):
     gene = random.randint(0, len(individuo) - 1)
     individuo[gene] = gene_letra(letras)
     return individuo
+
+def mutacao_senha_sv(individuo, letras, tamanho_max):
+    """Realiza a mutação de um gene no problema da senha.
+    Args:
+      individuo: uma lista representado um individuo no problema da senha
+      letras: letras possíveis de serem sorteadas.
+    Return:
+      Um individuo (senha) com um gene mutado.
+    """
+    
+    if random. random () < .5:
+        gene = random.randint(0, len(individuo) - 1)
+        individuo[gene] = gene_letra(letras)
+        return individuo
+    else: 
+        novo_tamanho = random.randint(3, tamanho_max)
+        if novo_tamanho < len(individuo):
+            return individuo[:novo_tamanho]
+        else:
+            for _ in range (novo_tamanho - len(individuo)):
+                individuo.append(gene_letra(letras))
+            return individuo
+
 
 
     
@@ -339,6 +397,27 @@ def funcao_objetivo_senha(individuo, senha_verdadeira): #medir o quanto o que vc
 
     return diferenca
 
+def funcao_objetivo_sv(individuo, senha_verdadeira, peso_penalidade):
+    """Computa a funcao objetivo de um individuo no problema da senha
+    Args:
+      individiuo: lista contendo as letras da senha
+      senha_verdadeira: a senha que você está tentando descobrir
+      peso_penalidade: peso adicionado para a diferença de tamanho entre a lista teste e a lita certa (o valor do fit para cada erro) - faz o fit ficar maior
+    Returns:
+      A "distância" entre a senha proposta e a senha verdadeira. Essa distância
+      é medida letra por letra. Quanto mais distante uma letra for da que
+      deveria ser, maior é essa distância.
+    """
+    diferenca = 0
+
+    for letra_candidato, letra_oficial in zip(individuo, senha_verdadeira): #itera as duas listas ao mesmo tempo
+        diferenca = diferenca + abs(ord(letra_candidato) - ord(letra_oficial))
+    
+    diferenca_tamanho = abs(len(individuo) - len(senha_verdadeira))
+    diferenca += peso_penalidade * diferenca_tamanho
+
+    return diferenca
+    
 #################################################################
 #                 Função objetivo - população              
 #################################################################
@@ -389,5 +468,21 @@ def funcao_objetivo_pop_senha(populacao, senha_verdadeira):
         resultado.append(funcao_objetivo_senha(individuo, senha_verdadeira))
 
     return resultado
+
+def funcao_objetivo_pop_sv (populacao, senha_verdadeira, peso_penalidade):
+    """Computa a funcao objetivo de uma populaçao no problema da senha.
+    Args:
+      populacao: lista com todos os individuos da população
+      senha_verdadeira: a senha que você está tentando descobrir
+      peso_penalidade: peso adicionado para a diferença de tamanho entre a lista teste e a lita certa (o valor do fit para cada erro) - faz o fit ficar maior
+    Returns:
+      Lista contendo os valores da métrica de distância entre senhas.
+    """
+    resultado = []
+    for individuo in populacao:
+        resultado.append(funcao_objetivo_sv(individuo, senha_verdadeira, peso_penalidade))
+
+    return resultado
+    
 
  
