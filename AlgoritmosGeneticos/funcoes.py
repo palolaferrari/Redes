@@ -93,6 +93,22 @@ def individuo_senha(tamanho_senha, letras):
     return candidato
 
 
+    
+def individuo_senha_variavel(letras):
+    """Cria um candidato para o problema da senha
+    Args:
+      letras: letras possíveis de serem sorteadas.
+    Return:
+      Lista com  letras
+    """
+
+    candidato = []
+
+    for n in range(tamanho_senha):
+        candidato.append(gene_letra(letras))
+
+    return candidato
+
 
 
 #################################################################
