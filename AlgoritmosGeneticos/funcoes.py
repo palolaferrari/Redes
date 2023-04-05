@@ -329,21 +329,22 @@ def mutacao_senha(individuo, letras):
 def mutacao_senha_sv(individuo, letras, tamanho_max):
     """Realiza a mutação de um gene no problema da senha.
     Args:
-      individuo: uma lista representado um individuo no problema da senha
+      individuo: uma lista representado um individuo no problema da senha.
       letras: letras possíveis de serem sorteadas.
+      tamanho_max: tamanho máximo de letras que meu individuo pode ter.
     Return:
       Um individuo (senha) com um gene mutado.
     """
     
-    if random. random () < .5:
+    if random.random () < .5:    #50% de chance mutar uma letra e 50% de mutar o tamanho
         gene = random.randint(0, len(individuo) - 1)
         individuo[gene] = gene_letra(letras)
         return individuo
     else: 
         novo_tamanho = random.randint(3, tamanho_max)
-        if novo_tamanho < len(individuo):
+        if novo_tamanho < len(individuo): # se a senha antiga tiver o tamanho maior, corta até até o tamanho novo
             return individuo[:novo_tamanho]
-        else:
+        else:       # se a senha antiga for menor, adiciona tantas letras quanto forem necessárias
             for _ in range (novo_tamanho - len(individuo)):
                 individuo.append(gene_letra(letras))
             return individuo
@@ -404,8 +405,7 @@ def funcao_objetivo_sv(individuo, senha_verdadeira, peso_penalidade):
       senha_verdadeira: a senha que você está tentando descobrir
       peso_penalidade: peso adicionado para a diferença de tamanho entre a lista teste e a lita certa (o valor do fit para cada erro) - faz o fit ficar maior
     Returns:
-      A "distância" entre a senha proposta e a senha verdadeira. Essa distância
-      é medida letra por letra. Quanto mais distante uma letra for da que
+      A "distância" entre a senha proposta e a senha verdadeira. Essa distância é medida letra por letra. Quanto mais distante uma letra for da que
       deveria ser, maior é essa distância.
     """
     diferenca = 0
