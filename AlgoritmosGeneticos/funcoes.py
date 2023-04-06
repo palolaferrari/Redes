@@ -1,5 +1,48 @@
 import random
 
+###############################################################################
+#                                   Suporte                                   #
+###############################################################################
+
+
+def distancia_entre_dois_pontos(a, b):
+    """Computa a distância Euclidiana entre dois pontos em R^2
+    Args:
+      a: lista contendo as coordenadas x e y de um ponto.
+      b: lista contendo as coordenadas x e y de um ponto.
+    Returns:
+      Distância entre as coordenadas dos pontos `a` e `b`.
+    """
+
+    x1 = a[0]
+    x2 = b[0]
+    y1 = a[1]
+    y2 = b[1]
+
+    dist = ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** (1 / 2)
+
+    return dist
+
+
+def cria_cidades(n):
+    """Cria um dicionário aleatório de cidades com suas posições (x,y).
+    Args:
+      n: inteiro positivo
+        Número de cidades que serão visitadas pelo caixeiro.
+    Returns:
+      Dicionário contendo o nome das cidades como chaves e a coordenada no plano
+      cartesiano das cidades como valores.
+    """
+
+    cidades = {}
+
+    for i in range(n):
+        cidades[f"Cidade {i}"] = (random.random(), random.random()) #criamos por tuplas, para nao mudar onde estão as cidades durante o provblema
+
+    return cidades
+
+
+
 #################################################################
 #                           genes
 #################################################################
@@ -112,6 +155,23 @@ def individuo_senha_variavel(max_tamanho, letras):
 
 
 
+def individuo_cv(cidades):
+    """Sorteia um caminho possível no problema do caixeiro viajante
+    Args:
+      cidades:
+        Dicionário onde as chaves são os nomes das cidades e os valores são as
+        coordenadas das cidades.
+    Return:
+      Retorna uma lista de nomes de cidades formando um caminho onde visitamos
+      cada cidade apenas uma vez.
+    """
+    nomes = list(cidades.keys())
+    random.shuffle(nomes) #shuffle muda a ordem da minha lista
+    return nomes
+
+
+
+
 #################################################################
 #                        população
 #################################################################
@@ -179,6 +239,26 @@ def populacao_inicial_senha_variavel(tamanho, max_tamanho, letras):
     for n in range(tamanho):
         populacao.append(individuo_senha_variavel(max_tamanho, letras))
     return populacao
+
+
+# NOVIDADE
+def populacao_inicial_cv(tamanho, cidades):
+    """Cria população inicial no problema do caixeiro viajante.
+    Args
+      tamanho:
+        Tamanho da população.
+      cidades:
+        Dicionário onde as chaves são os nomes das cidades e os valores são as
+        coordenadas das cidades.
+    Returns:
+      Lista com todos os indivíduos da população no problema do caixeiro
+      viajante.
+    """
+    populacao = []
+    for _ in range(tamanho):
+        populacao.append(individuo_cv(cidades))
+    return populacao
+
 
 #################################################################
 #                        seleção
@@ -281,6 +361,36 @@ def cruzamento_ponto_simples_sv(mae, pai):
 
 
 
+def cruzamento_ordenado(pai, mae):
+    """Operador de cruzamento ordenado.
+    Neste cruzamento, os filhos mantém os mesmos genes que seus pais tinham,
+    porém em uma outra ordem. Trata-se de um tipo de cruzamento útil para
+    problemas onde a ordem dos genes é importante e não podemos alterar os genes
+    em si. É um cruzamento que pode ser usado no problema do caixeiro viajante.
+    Ver pág. 37 do livro do Wirsansky.
+    Args:
+      pai: uma lista representando um individuo
+      mae : uma lista representando um individuo
+    Returns:
+      Duas listas, sendo que cada uma representa um filho dos pais que foram os
+      argumentos. Estas listas mantém os genes originais dos pais, porém altera
+      a ordem deles
+    """
+    corte1 = random.randint(0, len(pai) - 2)# escolher um ponto aleatorio na lista sem chegar no final
+    corte2 = random.randint(corte1 + 1, len(pai) - 1) # escolher um ponto aleatorio na lista a partir do corte 1, para não cair o corte no mesmo lugar
+    
+    filho1 = pai [corte1:corte2]
+    for gene in mae:
+        if gene not in filho1:
+            filho1.append(gene)
+    
+    filho2= mae[corte1:corte2]
+    for gene in pai:
+        if gene not in filho2:
+            filho2.append(gene)
+    
+    return filho1, filho2
+
 #################################################################
 #                         mutação 
 #################################################################
@@ -351,6 +461,26 @@ def mutacao_senha_sv(individuo, letras, tamanho_max):
 
 
 
+def mutacao_de_troca(individuo):
+    """Troca o valor de dois genes.
+    Args:
+      individuo: uma lista representado um individuo.
+    Return:
+      O indivíduo recebido como argumento, porém com dois dos seus genes
+      trocados de posição.
+    """
+    
+    #sample #amostragem de um conjunto de uma lista
+    indices = list(range(len(individuo)))
+    lista_sorteada = random.sample(indices, k=2)
+    indice1 = lista_sorteada[0]
+    indice2 = lista_sorteada[1]
+    
+    individuo [indice1], individuo [indice2] = individuo [indice2], individuo [indice1]    
+    
+    return individuo
+    
+
     
 
 #################################################################
@@ -417,6 +547,39 @@ def funcao_objetivo_sv(individuo, senha_verdadeira, peso_penalidade):
     diferenca += peso_penalidade * diferenca_tamanho
 
     return diferenca
+
+
+def funcao_objetivo_cv(individuo, cidades):
+    """Computa a funcao objetivo de um individuo no problema do caixeiro viajante.
+    Args:
+      individiuo:
+        Lista contendo a ordem das cidades que serão visitadas
+      cidades:
+        Dicionário onde as chaves são os nomes das cidades e os valores são as
+        coordenadas das cidades.
+    Returns:
+      A distância percorrida pelo caixeiro seguindo o caminho contido no
+      `individuo`. Lembrando que após percorrer todas as cidades em ordem, o
+      caixeiro retorna para a cidade original de onde começou sua viagem.
+    """
+
+    distancia = 0
+    for posicao in range(len(individuo)-1):
+        partida = cidades [individuo[posicao]]
+        chegada = cidades [individuo[posicao+1]]
+        
+        percurso = distancia_entre_dois_pontos(partida, chegada)
+        distancia = distancia + percurso #armazena a distancia
+        
+    #calculando o caminho de volta para a cidade inicial
+    partida = cidades[individuo[-1]] #ultima cidade 
+    chegada = cidades[individuo[0]] # até a primeira
+    
+    percurso = distancia_entre_dois_pontos (partida, chegada)
+    distancia = distancia + percurso
+    
+    return distancia
+
     
 #################################################################
 #                 Função objetivo - população              
@@ -483,6 +646,25 @@ def funcao_objetivo_pop_sv (populacao, senha_verdadeira, peso_penalidade):
         resultado.append(funcao_objetivo_sv(individuo, senha_verdadeira, peso_penalidade))
 
     return resultado
-    
 
+
+# NOVIDADE
+def funcao_objetivo_pop_cv(populacao, cidades):
+    """Computa a funcao objetivo de uma população no problema do caixeiro viajante.
+    Args:
+      populacao:
+        Lista com todos os inviduos da população
+      cidades:
+        Dicionário onde as chaves são os nomes das cidades e os valores são as
+        coordenadas das cidades.
+    Returns:
+      Lista contendo a distância percorrida pelo caixeiro para todos os
+      indivíduos da população.
+    """
+
+    resultado = []
+    for individuo in populacao:
+        resultado.append(funcao_objetivo_cv(individuo, cidades))
+
+    return resultado
  
