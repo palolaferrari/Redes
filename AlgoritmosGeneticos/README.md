@@ -8,6 +8,7 @@ Os experimentos do grupo de Algoritmos Genéticos estão nessa pasta e estão di
 4. Caixas não-Binária (com cruzamento de mutação)
 5. Descobrindo a senha (com um tamanho definido) 
 6. Caixeiro viajante (comparando com método exaustivo de combinação do `itertools`)
+7. Realizando restrições - **ainda não realizado**
 
 Experimento GA.01 - resolvendo o problema descobrindo a senha com tamanho variável.
 
