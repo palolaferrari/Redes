@@ -348,6 +348,7 @@ def selecao_torneio_min(populacao, fitness, tamanho_torneio=3):
     return selecionados
 
 
+
 #################################################################
 #                       cruzamento
 #################################################################
@@ -637,6 +638,40 @@ def funcao_objetivo_mochila(individuo, objetos, limite, ordem_dos_nomes):
     return valor_mochila
 
 
+
+def funcao_objetivo_cv_gasolina(individuo, cidades):
+    """Computa a funcao objetivo de um individuo no problema do caixeiro viajante.
+    Args:
+      individiuo:
+        Lista contendo a ordem das cidades que serão visitadas
+      cidades:
+        Dicionário onde as chaves são os nomes das cidades e os valores são as
+        coordenadas das cidades.
+    Returns:
+      A distância percorrida pelo caixeiro seguindo o caminho contido no
+      `individuo`. Lembrando que após percorrer todas as cidades em ordem, o
+      caixeiro retorna para a cidade original de onde começou sua viagem.
+    """
+
+    distancia = 0
+    for posicao in range(len(individuo)-1):
+        partida = cidades [individuo[posicao]]
+        chegada = cidades [individuo[posicao+1]]
+        
+        percurso = distancia_entre_dois_pontos(partida, chegada)
+        distancia = distancia + percurso #armazena a distancia
+        
+    #calculando o caminho de volta para a cidade inicial
+    partida = cidades[individuo[-1]] #ultima cidade 
+    chegada = cidades[individuo[0]] # até a primeira
+    
+    percurso = distancia_entre_dois_pontos (partida, chegada)
+    distancia = distancia + percurso
+    
+    return -distancia # por ser um problema de maximizacao
+
+
+
 #################################################################
 #                 Função objetivo - população              
 #################################################################
@@ -750,6 +785,26 @@ def funcao_objetivo_pop_mochila(populacao, objetos, limite, ordem_dos_nomes):
                 individuo, objetos, limite, ordem_dos_nomes
             )
         )
+
+    return resultado
+
+
+def funcao_objetivo_pop_cv_gasoliba(populacao, cidades):
+    """Computa a funcao objetivo de uma população no problema do caixeiro viajante.
+    Args:
+      populacao:
+        Lista com todos os inviduos da população
+      cidades:
+        Dicionário onde as chaves são os nomes das cidades e os valores são as
+        coordenadas das cidades.
+    Returns:
+      Lista contendo a distância percorrida pelo caixeiro para todos os
+      indivíduos da população.
+    """
+
+    resultado = []
+    for individuo in populacao:
+        resultado.append(funcao_objetivo_cv_gasolina(individuo, cidades))
 
     return resultado
  
