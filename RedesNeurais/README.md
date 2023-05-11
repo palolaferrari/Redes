@@ -1,5 +1,13 @@
 # Experimentos de redes neurais artificiais
 
-Coloque seus experimentos de redes neurais nesta pasta.
+O grupo de arquivos de Redes Neurais estão divididos em:
 
-Esceva um README aqui para guiar o leitor sobre seus experimentos realizados.
+`experimentos`
+
+`classes`:
+
+`constantes`:
+
+`funções`
+
+
