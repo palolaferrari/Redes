@@ -1,6 +1,6 @@
 # Experimentos de otimização e algoritmos genéticos
 
-Os experimentos do grupo de Algoritmos Genéticos estão nessa pasta e estão divididos em:
+O grupo de arquivos de Algoritmos Genéticos estão divididos em:
 
 `experimentos`:
 1. Busca aleatória resolvendo o problema da caixa binária
