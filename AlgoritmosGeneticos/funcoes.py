@@ -640,7 +640,7 @@ def funcao_objetivo_mochila(individuo, objetos, limite, ordem_dos_nomes):
 
 
 def funcao_objetivo_cv_gasolina(individuo, cidades):
-    """Computa a funcao objetivo de um individuo no problema do caixeiro viajante.
+    """Computa a funcao objetivo de um individuo no problema do caixeiro viajante com gasolina infinita.
     Args:
       individiuo:
         Lista contendo a ordem das cidades que serão visitadas
@@ -789,8 +789,8 @@ def funcao_objetivo_pop_mochila(populacao, objetos, limite, ordem_dos_nomes):
     return resultado
 
 
-def funcao_objetivo_pop_cv_gasoliba(populacao, cidades):
-    """Computa a funcao objetivo de uma população no problema do caixeiro viajante.
+def funcao_objetivo_pop_cv_gasolina(populacao, cidades):
+    """Computa a funcao objetivo de uma população no problema do caixeiro viajante com gasolina infinita.
     Args:
       populacao:
         Lista com todos os inviduos da população
