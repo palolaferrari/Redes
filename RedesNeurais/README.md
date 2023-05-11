@@ -1,5 +1,17 @@
 # Experimentos de redes neurais artificiais
 
-Coloque seus experimentos de redes neurais nesta pasta.
+O grupo de arquivos de Redes Neurais estão divididos em:
 
-Esceva um README aqui para guiar o leitor sobre seus experimentos realizados.
+`experimentos`: 
+1. derivadas - base de redes neurais (`backpropagation`)
+2. classees - explica como trabalhar com classes
+3. construindo um grafo automaticamente - primeiro passo para construir uma rede neural, representa todas as operações matemáticas da rede
+4. computando gradientes locais - computa cada gradiente de cada vértice.
+
+`classes`: classes que vamos usar para os experimentos
+
+`constantes`: (vazia)
+
+`funções`: funções que serão usadas para os experimentos de redes 
+
+
